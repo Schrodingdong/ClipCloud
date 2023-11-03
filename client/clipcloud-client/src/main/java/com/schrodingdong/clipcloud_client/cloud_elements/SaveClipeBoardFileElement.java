@@ -14,4 +14,9 @@ public class SaveClipeBoardFileElement extends SaveClipBoardElement{
     protected void saveClipBoardElementToLocal(ClipBoardElement element) {
 
     }
+
+    @Override
+    protected void synchronizeLocalElementsWithCloud() {
+
+    }
 }

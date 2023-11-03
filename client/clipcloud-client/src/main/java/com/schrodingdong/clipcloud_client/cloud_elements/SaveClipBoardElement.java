@@ -1,9 +1,11 @@
 package com.schrodingdong.clipcloud_client.cloud_elements;
 
 
+import com.schrodingdong.clipcloud_client.App;
 import com.schrodingdong.clipcloud_client.elements.ClipBoardElement;
+import com.schrodingdong.clipcloud_client.elements.TextClipBoardElement;
 
-import java.io.Serializable;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -11,20 +13,19 @@ import java.net.Socket;
  * This class is responsible for saving the clipboard element to the cloud.
  * In case where there is a connection failure, we will have to save the clipboard element to the local storage.
  */
-public abstract class SaveClipBoardElement implements Serializable {
+public abstract class SaveClipBoardElement {
+    protected ObjectOutputStream objectOutputStream_offlineElements;
+    protected ObjectInputStream objectInputStream_offlineElements;
 
-    public void saveClipBoardElement(ClipBoardElement element) {
-        if(isNetworkConnected()){
-            System.out.println(">> Network is connected");
-            saveClipBoardElementToCloud(element);
-        } else {
-            System.out.println(">> Network is not connected");
-            saveClipBoardElementToLocal(element);
-        }
+    public void saveClipBoardElement(ClipBoardElement<?> element) {
+        // TODO : dev of local saving
+        saveClipBoardElementToLocal(element);
+        synchronizeLocalElementsWithCloud();
     }
 
-    protected abstract void saveClipBoardElementToCloud(ClipBoardElement element);
-    protected abstract void saveClipBoardElementToLocal(ClipBoardElement element);
+    protected abstract void saveClipBoardElementToCloud(ClipBoardElement<?> element);
+    protected abstract void saveClipBoardElementToLocal(ClipBoardElement<?> element);
+    protected abstract void synchronizeLocalElementsWithCloud();
     private boolean isNetworkConnected() {
         try {
             // You can use a well-known host like google.com or any other reliable host
