@@ -1,15 +1,19 @@
 package com.schrodingdong.clipcloud_client.elements;
 
-public class TextClipBoardElement implements IClipBoardElement<String>{
+public class TextClipBoardElement extends ClipBoardElement<String> {
     private String content;
 
+    public TextClipBoardElement(String content) {
+        this.content = content;
+    }
+
     @Override
-    public String getClipBoardElement() {
+    public String getContent() {
         return content;
     }
 
     @Override
-    public void setClipBoardElement(String clipBoardElement) {
+    public void setContent(String clipBoardElement) {
         this.content = clipBoardElement;
     }
 }
