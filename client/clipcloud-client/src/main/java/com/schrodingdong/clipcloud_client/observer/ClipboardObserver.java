@@ -43,12 +43,14 @@ public class ClipboardObserver implements ClipboardOwner {
             try{
                 // get the clip content
                 String clipboardText = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                System.out.println("clipboard text: " + clipboardText);
                 // format it into a class
                 ClipBoardElement<String> clipBoardElement = new TextClipBoardElement(clipboardText);
                 // save it
                 saveClipBoardElement = new SaveClipBoardTextElement();
-                saveClipBoardElement.saveClipBoardElement(clipBoardElement);
+                System.out.println(
+                        clipBoardElement.getContent()
+                );
+//                saveClipBoardElement.saveClipBoardElement(clipBoardElement);
             } catch (Exception e) {
                 System.err.println("not a string");
             }
@@ -58,7 +60,7 @@ public class ClipboardObserver implements ClipboardOwner {
                 ClipBoardElement<BufferedImage> clipBoardElement = new ImageClipBoardElement(clipboardImage);
                 // save it
                 saveClipBoardElement = new SaveClipBoardImageElement();
-                saveClipBoardElement.saveClipBoardElement(clipBoardElement);
+//                saveClipBoardElement.saveClipBoardElement(clipBoardElement);
             } catch (Exception e) {
                 System.err.println("not an image");
             }
@@ -69,8 +71,8 @@ public class ClipboardObserver implements ClipboardOwner {
                     ClipBoardElement<File> clipBoardElement = new FileClipBoardElement(file);
                     // save it
                     saveClipBoardElement = new SaveClipeBoardFileElement();
-                    saveClipBoardElement.saveClipBoardElement(clipBoardElement);
-                }
+//                    saveClipBoardElement.saveClipBoardElement(clipBoardElement);
+                } // try a batch saving ??
             } catch (Exception e) {
                 System.err.println("not a file");
             }
@@ -79,9 +81,5 @@ public class ClipboardObserver implements ClipboardOwner {
         }catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void doAction(String clipboardContent){
-        System.out.println("Clipboard content: " + clipboardContent);
     }
 }

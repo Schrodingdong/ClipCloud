@@ -15,8 +15,10 @@ public abstract class SaveClipBoardElement implements Serializable {
 
     public void saveClipBoardElement(ClipBoardElement element) {
         if(isNetworkConnected()){
+            System.out.println(">> Network is connected");
             saveClipBoardElementToCloud(element);
         } else {
+            System.out.println(">> Network is not connected");
             saveClipBoardElementToLocal(element);
         }
     }

@@ -10,6 +10,5 @@ public class SaveClipBoardTextElement extends SaveClipBoardElement {
 
     @Override
     public void saveClipBoardElementToLocal(ClipBoardElement element) {
-        //
     }
 }
