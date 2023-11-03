@@ -56,10 +56,10 @@ public class ClipboardObserver implements ClipboardOwner {
             List<File> clipboardFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
             for (File file : clipboardFiles) {
                 // format the data
-                ClipBoardElement<File> clipBoardElement = new FileClipBoardElement(file);
+                ClipBoardElement<File> clipBoardElement = new FileClipBoardElement(file, file.getAbsolutePath());
                 // save it
                 saveClipBoardElement = new SaveClipeBoardFileElement();
-//                    saveClipBoardElement.saveClipBoardElement(clipBoardElement);
+                saveClipBoardElement.saveClipBoardElement(clipBoardElement);
             } // try a batch saving ??
         } catch (Exception e) {
             System.err.println(">> clipboard element is : not a file");
@@ -76,7 +76,6 @@ public class ClipboardObserver implements ClipboardOwner {
             saveClipBoardElement.saveClipBoardElement(clipBoardElement);
         } catch (Exception e) {
             System.err.println(">> clipboard element is : not an image");
-            e.printStackTrace();
         }
     }
 

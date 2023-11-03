@@ -21,9 +21,6 @@ public class SaveClipBoardImageElement extends SaveClipBoardElement {
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {
-        // save the metadata AND the image to the local storage
-        System.out.println("Saving element to local storage : \n\t >>"+element.toString());
-
         // save the image in tmp folder
         ImageClipBoardElement imgElement = (ImageClipBoardElement) element;
         saveImageToTmpFolder(imgElement);
