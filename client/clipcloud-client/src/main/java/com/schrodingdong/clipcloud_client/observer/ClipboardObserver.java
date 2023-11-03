@@ -73,9 +73,10 @@ public class ClipboardObserver implements ClipboardOwner {
             ClipBoardElement<BufferedImage> clipBoardElement = new ImageClipBoardElement(clipboardImage);
             // save it
             saveClipBoardElement = new SaveClipBoardImageElement();
-//                saveClipBoardElement.saveClipBoardElement(clipBoardElement);
+            saveClipBoardElement.saveClipBoardElement(clipBoardElement);
         } catch (Exception e) {
             System.err.println(">> clipboard element is : not an image");
+            e.printStackTrace();
         }
     }
 
@@ -90,7 +91,6 @@ public class ClipboardObserver implements ClipboardOwner {
             saveClipBoardElement.saveClipBoardElement(clipBoardElement);
         } catch (Exception e) {
             System.err.println(">> clipboard element is : not a string");
-            e.printStackTrace();
         }
     }
 }

@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class FileClipBoardElement extends ClipBoardElement<File>{
-    private File content;
+    private transient File content;
 
     public FileClipBoardElement(File content) {
         this.content = content;

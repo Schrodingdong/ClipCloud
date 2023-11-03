@@ -13,14 +13,15 @@ public class SaveClipBoardTextElement extends SaveClipBoardElement {
     public void saveClipBoardElementToCloud(ClipBoardElement<?> element) {
         // TODO
     }
+
     @Override
-    public void saveClipBoardElementToLocal(ClipBoardElement<?> element) {
+    protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {
+        System.out.println("Saving element to local storage : \n\t >>"+element.toString());
         List<ClipBoardElement<?>> elementList;
 
-        try (ObjectInputStream objectInputStream_offlineElements = new ObjectInputStream(new FileInputStream(App.OFFLINE_ELEMENTS_FILE))) {
+        try (ObjectInputStream objectInputStream_offlineElements = new ObjectInputStream(new FileInputStream(App.OFFLINE_TEXT_ELEMENTS_FILE))) {
             // Read the existing list (if any)
             elementList = (List<ClipBoardElement<?>>) objectInputStream_offlineElements.readObject();
-            System.out.println(elementList.toString());
         } catch (EOFException e) {
             // No elements in the file
             elementList = new ArrayList<>();
@@ -30,8 +31,11 @@ public class SaveClipBoardTextElement extends SaveClipBoardElement {
 
         // Add the new element to the list
         elementList.add(element);
+        // order the list by date
+        // so we can go through the list and send the elements in the right order when we synchronize
+        elementList.sort((o1, o2) -> o1.getCreated().compareTo(o2.getCreated()));
 
-        try (ObjectOutputStream objectOutputStream_offlineElements = new ObjectOutputStream(new FileOutputStream(App.OFFLINE_ELEMENTS_FILE))) {
+        try (ObjectOutputStream objectOutputStream_offlineElements = new ObjectOutputStream(new FileOutputStream(App.OFFLINE_TEXT_ELEMENTS_FILE))) {
             // Save the updated list
             objectOutputStream_offlineElements.writeObject(elementList);
             objectOutputStream_offlineElements.flush();
@@ -42,7 +46,7 @@ public class SaveClipBoardTextElement extends SaveClipBoardElement {
 
     @Override
     protected void synchronizeLocalElementsWithCloud() {
-        try (ObjectInputStream objectInputStream_offlineElements = new ObjectInputStream(new FileInputStream(App.OFFLINE_ELEMENTS_FILE))) {
+        try (ObjectInputStream objectInputStream_offlineElements = new ObjectInputStream(new FileInputStream(App.OFFLINE_TEXT_ELEMENTS_FILE))) {
             List<TextClipBoardElement> el = (List<TextClipBoardElement>) objectInputStream_offlineElements.readObject();
             System.out.println(el.toString());
         } catch (IOException | ClassNotFoundException e) {
