@@ -6,21 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class InputValidator {
-    private final List<String> inputEssentialFields = new ArrayList<>();
-    private final List<String> inputImageFields = new ArrayList<>();
-    private final List<String> inputFileFields = new ArrayList<>();
-
-
-    public InputValidator(){
-        inputEssentialFields.addAll(Arrays.asList(
-                "created", "uuid", "type", "osVersion", "osName", "osArch", "userName","content"
-        ));
-        inputImageFields.addAll(Arrays.asList("srcPath", "tmpPath"));
-        inputFileFields.addAll(Arrays.asList("srcPath", "tmpPath"));
-    }
+    public static final List<String> INPUT_ESSENTIAL_FIELDS = Arrays.asList("created", "uuid", "type", "osVersion", "osName", "osArch", "userName","content");
+    public static final List<String> INPUT_IMAGE_FIELDS = Arrays.asList("imgName", "tmpPath");
+    public static final List<String> INPUT_FILE_FIELDS = Arrays.asList("srcPath", "tmpPath");
 
     public boolean validateEssentialInputFields(Map<String, Object> input){
-        for (String field : inputEssentialFields) {
+        for (String field : INPUT_ESSENTIAL_FIELDS) {
             if (!input.containsKey(field)) {
                 return false;
             }
@@ -34,7 +25,7 @@ public class InputValidator {
 
     public boolean validateImageInputFields(Map<String, Object> input){
         if(!validateEssentialInputFields(input)) return false;
-        for(String field: inputImageFields){
+        for(String field: INPUT_IMAGE_FIELDS){
             if(!input.containsKey(field)){
                 return false;
             }
@@ -44,7 +35,7 @@ public class InputValidator {
 
     public boolean validateFileInputFields(Map<String, Object> input){
         if(!validateEssentialInputFields(input)) return false;
-        for(String field: inputFileFields){
+        for(String field: INPUT_FILE_FIELDS){
             if(!input.containsKey(field)){
                 return false;
             }
