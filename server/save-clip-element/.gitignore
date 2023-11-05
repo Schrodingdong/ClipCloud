@@ -1,0 +1,15 @@
+*.class
+target
+/bin/
+/.settings/
+node_modules
+.project
+.classpath
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Serverless directories
+.serverless
