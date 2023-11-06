@@ -5,26 +5,24 @@ frameworkVersion: "3"
 
 provider:
   name: aws
-  runtime: java8
+  runtime: java17
   profile: serverless-aws-user
   stage: dev
   region: eu-west-2
   environment:
     tableName: ${self:custom.tableName}
+    bucketName: ${self:custom.bucketName}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
+        - s3:*
       Resource: '*'
 
-plugins:
-  - serverless-s3-sync
 
 custom:
-  s3Sync:
-    - bucketName: demo-bucket-8465486165
-      localDir: upload-data
   tableName: clip-element-metadata-table-584312548
+  bucketName: clip-element-files-bucket-584312548
 
 package:
   artifact: target/hello-dev.jar
@@ -41,10 +39,10 @@ functions:
 
 resources:
   Resources:
-    DemoBucket:
+    ClipElementFilesBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: demo-bucket-8465486165
+        BucketName: ${self:custom.bucketName}
     ClipElementMetadataTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -52,7 +50,6 @@ resources:
         AttributeDefinitions:
           - AttributeName: uuid
             AttributeType: S
-
         KeySchema:
           - AttributeName: uuid
             KeyType: HASH

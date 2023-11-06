@@ -1,5 +1,7 @@
 package com.serverless.save_lambda;
 
+import java.io.*;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,12 +9,13 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.serverless.ApiGatewayResponse;
 import com.serverless.InputValidator;
 import com.serverless.Response;
-import jdk.javadoc.internal.doclets.toolkit.taglets.snippet.Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,10 +26,13 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 
 	private static final Logger LOG = LogManager.getLogger(Handler.class);
 	private static final String TABLE_NAME = System.getenv("tableName");
+	private static final String BUCKET_NAME = System.getenv("bucketName");
 	private final Regions  REGION = Regions.EU_WEST_2;
 	private final Map<String,String> headers = new HashMap<>();
 	private final InputValidator inputValidator = new InputValidator();
-	private AmazonDynamoDB client;
+	private AmazonDynamoDB amazonDynamoDbClient;
+	private AmazonS3 amazonS3Client;
+	private Map<String, AttributeValue> itemToSave = new HashMap<>();
 
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> apiInput, Context context) {
@@ -51,7 +57,7 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 
 		// init methods
 		initHeaders();
-		initDynamoDbClient();
+		initSdkClients();
 
 		// check input validity
 		if(!inputValidator.validateEssentialInputFields(input)) {
@@ -120,8 +126,12 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		headers.put("Access-Control-Allow-Methods", "*");
 	}
 
-	private void initDynamoDbClient() {
-		this.client = AmazonDynamoDBClientBuilder
+	private void initSdkClients() {
+		this.amazonDynamoDbClient = AmazonDynamoDBClientBuilder
+				.standard()
+				.withRegion(REGION)
+				.build();
+		this.amazonS3Client = AmazonS3ClientBuilder
 				.standard()
 				.withRegion(REGION)
 				.build();
@@ -136,18 +146,95 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		}
 
 		// save it
-		client.putItem(TABLE_NAME, itemToSave);
+		LOG.info(">>> item to save to dynamo : "+ itemToSave);
+		amazonDynamoDbClient.putItem(TABLE_NAME, itemToSave);
+		LOG.info(">>> Saved to dynamodb");
 		return new Response("TextClipBoardElementHandler", input);
 	}
 
 	private Response fileClipBoardElementHandler(Map<String, Object> input) {
+		// Create the object to save
+		for(String key : InputValidator.INPUT_ESSENTIAL_FIELDS){
+			itemToSave.put(key, new AttributeValue(input.get(key).toString()));
+		}
+
+		// get extension
+		String extension = input.get("tmpPath").toString().substring(
+				input.get("tmpPath").toString().lastIndexOf('.')+1
+		);
+		LOG.info(">>> object extensiosn :" + extension);
+
+
+		// save it TO DYNAMODB =======================================================
+		LOG.info(">>> item to save to dynamo : "+ itemToSave);
+		amazonDynamoDbClient.putItem(TABLE_NAME, itemToSave);
+		LOG.info(">>> Saved to dynamodb");
+
+		// save it to S3 =============================================================
+		// get base64 content
+		byte[] contentBase64 = Base64.getDecoder().decode(
+				input.get("contentBase64").toString()
+		);
+		LOG.info(">>> Got the base64 content");
+		// format it & add metadata
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBase64);
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(contentBase64.length);
+		metadata.setContentType("image/"+extension);
+		metadata.addUserMetadata("author",input.get("userName").toString());
+		metadata.addUserMetadata("created",input.get("created").toString());
+		// save to bucket
+		amazonS3Client.putObject(//TODO make a standalone function for S3 uploads ???
+				BUCKET_NAME,
+				input.get("uuid").toString() + "." + extension,
+				byteArrayInputStream,
+				metadata
+		);
+		LOG.info(">>> saved to S3");
 		return new Response("FileClipBoardElementHandler", input);
 	}
 
 	private Response imageClipBoardElementHandler(Map<String, Object> input) {
+		// Create the object to save
+		for(String key : InputValidator.INPUT_ESSENTIAL_FIELDS){
+			itemToSave.put(key, new AttributeValue(input.get(key).toString()));
+		}
+
+		// get extension
+		String extension = input.get("tmpPath").toString().substring(
+				input.get("tmpPath").toString().lastIndexOf('.')+1
+		);
+		LOG.info(">>> object extensiosn :" + extension);
+
+
+		// save it TO DYNAMODB =======================================================
+		LOG.info(">>> item to save to dynamo : "+ itemToSave);
+		amazonDynamoDbClient.putItem(TABLE_NAME, itemToSave);
+		LOG.info(">>> Saved to dynamodb");
+
+		// save it to S3 =============================================================
+		// get base64 content
+		byte[] contentBase64 = Base64.getDecoder().decode(
+				input.get("contentBase64").toString()
+		);
+		LOG.info(">>> Got the base64 content");
+		// format it & add metadata
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBase64);
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(contentBase64.length);
+		metadata.setContentType("image/"+extension);
+		metadata.addUserMetadata("author",input.get("userName").toString());
+		metadata.addUserMetadata("created",input.get("created").toString());
+		// save to bucket
+		amazonS3Client.putObject(//TODO make a standalone function for S3 uploads ???
+				BUCKET_NAME,
+				input.get("uuid").toString() + "." + extension,
+				byteArrayInputStream,
+				metadata
+		);
+		LOG.info(">>> saved to S3");
+
 		return new Response("ImageClipBoardElementHandler", input);
 	}
-
-
 
 }
