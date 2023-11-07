@@ -1,15 +1,11 @@
-package com.schrodingdong.clipcloud_client.cloud_elements;
+package com.schrodingdong.clipcloud_client.savers;
 
 
-import com.schrodingdong.clipcloud_client.App;
-import com.schrodingdong.clipcloud_client.elements.ClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.TextClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is responsible for saving the clipboard element to the cloud.
@@ -26,7 +22,6 @@ public abstract class SaveClipBoardElement {
     }
 
     protected abstract void saveClipBoardElementToCloud(ClipBoardElement<?> element);
-
     protected abstract void saveClipBoardElementToLocal(ClipBoardElement<?> element);
     protected abstract void synchronizeLocalElementsWithCloud();
     private boolean isNetworkConnected() {

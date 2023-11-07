@@ -1,11 +1,8 @@
-package com.schrodingdong.clipcloud_client.elements;
-
-import java.time.Instant;
-import java.util.Date;
-import java.util.UUID;
+package com.schrodingdong.clipcloud_client.clip_elements;
 
 public class TextClipBoardElement extends ClipBoardElement<String> {
-    protected String content;
+    private String content;
+    public final ClipBoardElementTypes type = ClipBoardElementTypes.TEXT;
 
     public TextClipBoardElement(String content) {
         this.content = content;
@@ -25,6 +22,7 @@ public class TextClipBoardElement extends ClipBoardElement<String> {
     public String toString() {
         return "TextClipBoardElement{" +
                 "content='" + content + '\'' +
+                ", type=" + type+
                 ", created=" + created +
                 ", uuid=" + uuid +
                 ", osVersion='" + osVersion + '\'' +

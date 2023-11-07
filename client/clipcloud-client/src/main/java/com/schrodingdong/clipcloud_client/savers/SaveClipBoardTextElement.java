@@ -1,8 +1,8 @@
-package com.schrodingdong.clipcloud_client.cloud_elements;
+package com.schrodingdong.clipcloud_client.savers;
 
 import com.schrodingdong.clipcloud_client.App;
-import com.schrodingdong.clipcloud_client.elements.ClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.TextClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.TextClipBoardElement;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -3,6 +3,8 @@ package com.schrodingdong.clipcloud_client;
 import com.schrodingdong.clipcloud_client.observer.ClipboardObserver;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     public static final String HOME_PATH = System.getProperty("user.home");
@@ -34,4 +36,5 @@ public class App {
         System.out.println("Clipboard observer started. Press Ctrl+C to exit.");
         while (true) {}
     }
+
 }

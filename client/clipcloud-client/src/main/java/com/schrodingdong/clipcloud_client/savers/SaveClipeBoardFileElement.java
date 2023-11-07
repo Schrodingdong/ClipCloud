@@ -1,15 +1,10 @@
-package com.schrodingdong.clipcloud_client.cloud_elements;
+package com.schrodingdong.clipcloud_client.savers;
 
 import com.schrodingdong.clipcloud_client.App;
-import com.schrodingdong.clipcloud_client.elements.ClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.FileClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.ImageClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.TextClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.FileClipBoardElement;
 
-import javax.imageio.ImageIO;
 import java.io.*;
-import java.sql.Date;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +21,10 @@ public class SaveClipeBoardFileElement extends SaveClipBoardElement{
         // save the file in tmp folder
         FileClipBoardElement fileElement = (FileClipBoardElement) element;
         saveFileToTmpFolder(fileElement);
+
+        // set the base64 content
+        ((FileClipBoardElement) element).setContentBase64();
+
         // save the metadata in the offline file
         saveOfflineMetadataToFile(fileElement);
     }

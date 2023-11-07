@@ -1,23 +1,18 @@
 package com.schrodingdong.clipcloud_client.observer;
 
-import com.schrodingdong.clipcloud_client.cloud_elements.SaveClipBoardElement;
-import com.schrodingdong.clipcloud_client.cloud_elements.SaveClipBoardImageElement;
-import com.schrodingdong.clipcloud_client.cloud_elements.SaveClipBoardTextElement;
-import com.schrodingdong.clipcloud_client.cloud_elements.SaveClipeBoardFileElement;
-import com.schrodingdong.clipcloud_client.elements.ClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.FileClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.ImageClipBoardElement;
-import com.schrodingdong.clipcloud_client.elements.TextClipBoardElement;
+import com.schrodingdong.clipcloud_client.savers.SaveClipBoardElement;
+import com.schrodingdong.clipcloud_client.savers.SaveClipBoardImageElement;
+import com.schrodingdong.clipcloud_client.savers.SaveClipBoardTextElement;
+import com.schrodingdong.clipcloud_client.savers.SaveClipeBoardFileElement;
+import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.FileClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.ImageClipBoardElement;
+import com.schrodingdong.clipcloud_client.clip_elements.TextClipBoardElement;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClipboardObserver implements ClipboardOwner {
@@ -36,7 +31,7 @@ public class ClipboardObserver implements ClipboardOwner {
             // with the Thread.Sleep(), we will be retrieving the latest clipboard element
             // the use of the Thread.sleep() is to make sure that the clipboard is not being used by another process
             // TODO : get the minimum time required to wait for the clipboard to be available
-            Thread.sleep(2000);
+            Thread.sleep(1500);
             transferable = clipboard.getContents(this);
 
             //Try catch to know the type, and make the needed saving procedures

@@ -1,4 +1,4 @@
-package com.schrodingdong.clipcloud_client.elements;
+package com.schrodingdong.clipcloud_client.clip_elements;
 
 import java.io.Serializable;
 import java.util.Date;
