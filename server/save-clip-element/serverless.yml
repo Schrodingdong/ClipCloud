@@ -12,22 +12,47 @@ provider:
   environment:
     tableName: ${self:custom.tableName}
     bucketName: ${self:custom.bucketName}
+    appClientId: {Ref: clipCloudCognitoUserPoolClient}
+    userPoolId: {Ref: clipCloudCognitoUserPool}
+#    appClientId: ${self:custom.appClientId}
+#    userPoolId: ${self:custom.userPoolId}
+#    userPoolArn: ${self:custom.userPoolArn}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
         - s3:*
+        - cognito-idp:*
       Resource: '*'
 
 
 custom:
   tableName: clip-element-metadata-table-584312548
   bucketName: clip-element-files-bucket-584312548
-
+  userPoolName: clip-element-user-pool-584312548
+  appClientName: clip-element-user-pool-client-584312548
+#  appClientId: 32o02dat1saar2b1gcvvtvsmc6
+#  userPoolId: eu-west-2_H6Uqw6xu0
+#  userPoolArn: arn:aws:cognito-idp:eu-west-2:468137164468:userpool/eu-west-2_H6Uqw6xu0
 package:
   artifact: target/hello-dev.jar
 
 functions:
+  login:
+    handler: com.serverless.login_lambda.Handler
+    events:
+      - http:
+          path: user/login
+          method: POST
+          cors: true
+  signup:
+    handler: com.serverless.signup_lambda.Handler
+    events:
+      - http:
+          path: user/signup
+          method: POST
+          cors: true
+
   save-clip-element:
     handler: com.serverless.save_lambda.Handler
     events:
@@ -35,6 +60,17 @@ functions:
           path: save-clip-element
           method: POST
           cors: true
+          authorizer:
+            scopes:
+              - aws.cognito.signin.user.admin
+            name: awsCognito
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt clipCloudCognitoUserPool.Arn
+#            arn: ${self:custom.userPoolArn}
+#              "Fn::GetAtt": [ clipCloudCognitoUserPool, Arn ]
+#              arn:aws:cognito-idp:eu-west-2:468137164468:userpool/eu-west-2_W2T2WFrUy
+#            claims:
+#              - email
 
 
 resources:
@@ -54,3 +90,48 @@ resources:
           - AttributeName: uuid
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+    clipCloudCognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.userPoolName}
+
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: true
+            RequireNumbers: false
+            RequireSymbols: false
+            RequireUppercase: false
+        Schema:
+          - AttributeDataType: String
+            Name: email
+            Required: true
+    clipCloudCognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:custom.appClientName}
+        UserPoolId: {Ref: clipCloudCognitoUserPool}
+        GenerateSecret: false
+        RefreshTokenValidity: 30
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthFlows:
+          - implicit
+          - code
+        AllowedOAuthScopes:
+          - email
+          - openid
+          - profile
+        ExplicitAuthFlows:
+          - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_USER_PASSWORD_AUTH
+        CallbackURLs:
+          - https://example.com/callback
+        LogoutURLs:
+          - https://example.com/logou
+        SupportedIdentityProviders:
+          - COGNITO

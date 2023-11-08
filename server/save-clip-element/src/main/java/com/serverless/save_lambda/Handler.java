@@ -5,13 +5,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.serverless.ApiGatewayResponse;
 import com.serverless.InputValidator;
@@ -21,21 +14,32 @@ import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.RegionScope;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private static final Logger LOG = LogManager.getLogger(Handler.class);
 	private static final String TABLE_NAME = System.getenv("tableName");
 	private static final String BUCKET_NAME = System.getenv("bucketName");
-	private final Regions  REGION = Regions.EU_WEST_2;
+	private final Region REGION = Region.EU_WEST_2;
 	private final Map<String,String> headers = new HashMap<>();
 	private final InputValidator inputValidator = new InputValidator();
-	private AmazonDynamoDB amazonDynamoDbClient;
-	private AmazonS3 amazonS3Client;
+	private DynamoDbClient amazonDynamoDbClient;
+	private S3Client amazonS3Client;
 	private Map<String, AttributeValue> itemToSave = new HashMap<>();
 
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> apiInput, Context context) {
+        // init methods
+        initHeaders();
+        initSdkClients();
 		// extract request body (don't forget to parse the string to a map
 		Map<String, Object> input = null;
 		try{
@@ -55,9 +59,6 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		// logging info
 		LOG.info(">>> received: \n{}", input);
 
-		// init methods
-		initHeaders();
-		initSdkClients();
 
 		// check input validity
 		if(!inputValidator.validateEssentialInputFields(input)) {
@@ -127,27 +128,31 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 	}
 
 	private void initSdkClients() {
-		this.amazonDynamoDbClient = AmazonDynamoDBClientBuilder
-				.standard()
-				.withRegion(REGION)
+		this.amazonDynamoDbClient = DynamoDbClient.builder()
+				.region(REGION)
 				.build();
-		this.amazonS3Client = AmazonS3ClientBuilder
-				.standard()
-				.withRegion(REGION)
+		this.amazonS3Client = S3Client.builder()
+				.region(REGION)
 				.build();
 	}
 
 	// TODO : implement handlers for each type(make a factory design pattern here)
 	private Response textClipBoardElementHandler(Map<String, Object> input) {
 		// Create the object to save
-		Map<String, AttributeValue> itemToSave = new HashMap<>();
 		for(String key : InputValidator.INPUT_ESSENTIAL_FIELDS){
-			itemToSave.put(key, new AttributeValue(input.get(key).toString()));
+			itemToSave.put(
+					key,
+					AttributeValue.builder().s(input.get(key).toString()).build()
+			);
 		}
+		PutItemRequest putItemRequest = PutItemRequest.builder()
+				.tableName(TABLE_NAME)
+				.item(itemToSave)
+				.build();
 
 		// save it
 		LOG.info(">>> item to save to dynamo : "+ itemToSave);
-		amazonDynamoDbClient.putItem(TABLE_NAME, itemToSave);
+		amazonDynamoDbClient.putItem(putItemRequest);
 		LOG.info(">>> Saved to dynamodb");
 		return new Response("TextClipBoardElementHandler", input);
 	}
@@ -155,8 +160,15 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 	private Response fileClipBoardElementHandler(Map<String, Object> input) {
 		// Create the object to save
 		for(String key : InputValidator.INPUT_ESSENTIAL_FIELDS){
-			itemToSave.put(key, new AttributeValue(input.get(key).toString()));
+			itemToSave.put(
+					key,
+					AttributeValue.builder().s(input.get(key).toString()).build()
+			);
 		}
+		PutItemRequest putItemRequest = PutItemRequest.builder()
+				.tableName(TABLE_NAME)
+				.item(itemToSave)
+				.build();
 
 		// get extension
 		String extension = input.get("tmpPath").toString().substring(
@@ -164,10 +176,9 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		);
 		LOG.info(">>> object extensiosn :" + extension);
 
-
 		// save it TO DYNAMODB =======================================================
 		LOG.info(">>> item to save to dynamo : "+ itemToSave);
-		amazonDynamoDbClient.putItem(TABLE_NAME, itemToSave);
+		amazonDynamoDbClient.putItem(putItemRequest);
 		LOG.info(">>> Saved to dynamodb");
 
 		// save it to S3 =============================================================
@@ -175,20 +186,24 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		byte[] contentBase64 = Base64.getDecoder().decode(
 				input.get("contentBase64").toString()
 		);
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBase64);
 		LOG.info(">>> Got the base64 content");
 		// format it & add metadata
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBase64);
-		ObjectMetadata metadata = new ObjectMetadata();
-		metadata.setContentLength(contentBase64.length);
-		metadata.setContentType("image/"+extension);
-		metadata.addUserMetadata("author",input.get("userName").toString());
-		metadata.addUserMetadata("created",input.get("created").toString());
+		Map<String, String> userMetadata = new HashMap<>();
+		userMetadata.put("author",input.get("userName").toString());
+		userMetadata.put("created",input.get("created").toString());
+		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+				.bucket(BUCKET_NAME)
+				.key(input.get("uuid").toString() + "." + extension)
+				.contentLength((long) contentBase64.length)
+				.contentType("image/"+extension)
+				.metadata(userMetadata)
+				.build();
+
 		// save to bucket
 		amazonS3Client.putObject(//TODO make a standalone function for S3 uploads ???
-				BUCKET_NAME,
-				input.get("uuid").toString() + "." + extension,
-				byteArrayInputStream,
-				metadata
+				putObjectRequest,
+				RequestBody.fromInputStream(byteArrayInputStream, contentBase64.length)
 		);
 		LOG.info(">>> saved to S3");
 		return new Response("FileClipBoardElementHandler", input);
@@ -197,8 +212,15 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 	private Response imageClipBoardElementHandler(Map<String, Object> input) {
 		// Create the object to save
 		for(String key : InputValidator.INPUT_ESSENTIAL_FIELDS){
-			itemToSave.put(key, new AttributeValue(input.get(key).toString()));
+			itemToSave.put(
+					key,
+					AttributeValue.builder().s(input.get(key).toString()).build()
+			);
 		}
+		PutItemRequest putItemRequest = PutItemRequest.builder()
+				.tableName(TABLE_NAME)
+				.item(itemToSave)
+				.build();
 
 		// get extension
 		String extension = input.get("tmpPath").toString().substring(
@@ -209,7 +231,7 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 
 		// save it TO DYNAMODB =======================================================
 		LOG.info(">>> item to save to dynamo : "+ itemToSave);
-		amazonDynamoDbClient.putItem(TABLE_NAME, itemToSave);
+		amazonDynamoDbClient.putItem(putItemRequest);
 		LOG.info(">>> Saved to dynamodb");
 
 		// save it to S3 =============================================================
@@ -217,20 +239,24 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		byte[] contentBase64 = Base64.getDecoder().decode(
 				input.get("contentBase64").toString()
 		);
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBase64);
 		LOG.info(">>> Got the base64 content");
 		// format it & add metadata
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBase64);
-		ObjectMetadata metadata = new ObjectMetadata();
-		metadata.setContentLength(contentBase64.length);
-		metadata.setContentType("image/"+extension);
-		metadata.addUserMetadata("author",input.get("userName").toString());
-		metadata.addUserMetadata("created",input.get("created").toString());
+		Map<String, String> userMetadata = new HashMap<>();
+		userMetadata.put("author",input.get("userName").toString());
+		userMetadata.put("created",input.get("created").toString());
+		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+				.bucket(BUCKET_NAME)
+				.key(input.get("uuid").toString() + "." + extension)
+				.contentLength((long) contentBase64.length)
+				.contentType("image/"+extension)
+				.metadata(userMetadata)
+				.build();
+
 		// save to bucket
 		amazonS3Client.putObject(//TODO make a standalone function for S3 uploads ???
-				BUCKET_NAME,
-				input.get("uuid").toString() + "." + extension,
-				byteArrayInputStream,
-				metadata
+				putObjectRequest,
+				RequestBody.fromInputStream(byteArrayInputStream, contentBase64.length)
 		);
 		LOG.info(">>> saved to S3");
 

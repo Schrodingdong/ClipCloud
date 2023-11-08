@@ -19,11 +19,27 @@
       <artifactId>aws-lambda-java-log4j2</artifactId>
       <version>1.5.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb -->
     <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-dynamodb</artifactId>
-      <version>1.12.581</version>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>dynamodb</artifactId>
+      <version>2.21.15</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/cognitoidentityprovider -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>cognitoidentityprovider</artifactId>
+      <version>2.21.15</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+      <version>2.21.16</version>
+    </dependency>
+
+
+
 
 
     <dependency>

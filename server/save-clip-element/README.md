@@ -19,3 +19,4 @@
 - To optimize your lambda functions you can :
   - Use webpack
   - Use specific aws java sdk (not the entire set)
+- The scope of the cognito is very important, to get the right access token you should use the right scope
