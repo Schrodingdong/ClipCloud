@@ -70,6 +70,7 @@ public class ClipboardObserver implements ClipboardOwner {
             saveClipBoardElement = new SaveClipBoardImageElement();
             saveClipBoardElement.saveClipBoardElement(clipBoardElement);
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println(">> clipboard element is : not an image");
         }
     }

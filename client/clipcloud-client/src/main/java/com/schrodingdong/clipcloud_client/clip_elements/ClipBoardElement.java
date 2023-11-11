@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.UUID;
 
 public abstract class ClipBoardElement<ElType> implements Serializable {
+    protected transient ElType content;
+    protected ClipBoardElementTypes type;
+    protected String contentBase64;
     protected Date created;
     protected UUID uuid;
     protected String osVersion;
@@ -22,7 +25,8 @@ public abstract class ClipBoardElement<ElType> implements Serializable {
     }
 
     public abstract ElType getContent();
-    public abstract void setContent(ElType element);
+    public abstract void setContent(ElType contentElement);
+    protected abstract void setContentBase64(ElType contentElement);
 
     public Date getCreated() {
         return created;
@@ -51,7 +55,10 @@ public abstract class ClipBoardElement<ElType> implements Serializable {
     @Override
     public String toString() {
         return "ClipBoardElement{" +
-                "created=" + created +
+                "content=" + content +
+                ", type=" + type +
+                ", contentBase64='" + contentBase64 + '\'' +
+                ", created=" + created +
                 ", uuid=" + uuid +
                 ", osVersion='" + osVersion + '\'' +
                 ", osName='" + osName + '\'' +

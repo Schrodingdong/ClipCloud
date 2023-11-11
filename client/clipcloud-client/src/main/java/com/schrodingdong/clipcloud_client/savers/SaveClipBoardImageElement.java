@@ -23,9 +23,6 @@ public class SaveClipBoardImageElement extends SaveClipBoardElement {
         ImageClipBoardElement imgElement = (ImageClipBoardElement) element;
         saveImageToTmpFolder(imgElement);
 
-        // set the base64 version
-        ((ImageClipBoardElement) element).setContentBase64();
-
         // save the metadata in the offline file
         saveOfflineMetadataToFile(imgElement);
     }

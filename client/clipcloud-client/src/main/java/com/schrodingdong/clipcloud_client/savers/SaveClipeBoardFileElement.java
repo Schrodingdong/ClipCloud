@@ -22,9 +22,6 @@ public class SaveClipeBoardFileElement extends SaveClipBoardElement{
         FileClipBoardElement fileElement = (FileClipBoardElement) element;
         saveFileToTmpFolder(fileElement);
 
-        // set the base64 content
-        ((FileClipBoardElement) element).setContentBase64();
-
         // save the metadata in the offline file
         saveOfflineMetadataToFile(fileElement);
     }

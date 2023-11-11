@@ -1,11 +1,14 @@
 package com.schrodingdong.clipcloud_client.clip_elements;
 
+import org.apache.commons.io.FileUtils;
+
+import java.util.Base64;
+
 public class TextClipBoardElement extends ClipBoardElement<String> {
-    private String content;
-    public final ClipBoardElementTypes type = ClipBoardElementTypes.TEXT;
 
     public TextClipBoardElement(String content) {
-        this.content = content;
+        this.type = ClipBoardElementTypes.TEXT;
+        setContent(content);
     }
 
     @Override
@@ -13,22 +16,16 @@ public class TextClipBoardElement extends ClipBoardElement<String> {
         return content;
     }
 
+
     @Override
-    public void setContent(String clipBoardElement) {
-        this.content = clipBoardElement;
+    public void setContent(String contentElement) {
+        this.content = contentElement;
+        setContentBase64(content);
     }
 
     @Override
-    public String toString() {
-        return "TextClipBoardElement{" +
-                "content='" + content + '\'' +
-                ", type=" + type+
-                ", created=" + created +
-                ", uuid=" + uuid +
-                ", osVersion='" + osVersion + '\'' +
-                ", osName='" + osName + '\'' +
-                ", osArch='" + osArch + '\'' +
-                ", userName='" + userName + '\'' +
-                '}';
+    protected void setContentBase64(String contentElement) {
+        byte[] byteStringContent = content.getBytes();
+        this.contentBase64 = Base64.getEncoder().encodeToString(byteStringContent);
     }
 }
