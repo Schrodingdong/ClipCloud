@@ -1,6 +1,8 @@
 package com.schrodingdong.clipcloud_client.savers;
 
 import com.schrodingdong.clipcloud_client.App;
+import com.schrodingdong.clipcloud_client.authentication.AuthenticationException;
+import com.schrodingdong.clipcloud_client.authentication.AwsAuthenticator;
 import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 import com.schrodingdong.clipcloud_client.clip_elements.ImageClipBoardElement;
 
@@ -9,13 +11,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO
 public class SaveClipBoardImageElement extends SaveClipBoardElement {
-    @Override
-    public void saveClipBoardElementToCloud(ClipBoardElement element) {
-
-    }
-
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {

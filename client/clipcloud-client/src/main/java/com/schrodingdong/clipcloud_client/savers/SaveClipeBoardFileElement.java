@@ -8,13 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO
 public class SaveClipeBoardFileElement extends SaveClipBoardElement{
-
-    @Override
-    protected void saveClipBoardElementToCloud(ClipBoardElement<?> element) {
-
-    }
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {

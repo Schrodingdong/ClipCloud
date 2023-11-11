@@ -1,7 +1,10 @@
 package com.schrodingdong.clipcloud_client.savers;
 
 
+import com.schrodingdong.clipcloud_client.api_client.ApiClient;
+import com.schrodingdong.clipcloud_client.authentication.AbstractAuthenticator;
 import com.schrodingdong.clipcloud_client.authentication.AuthenticationException;
+import com.schrodingdong.clipcloud_client.authentication.AwsAuthenticator;
 import com.schrodingdong.clipcloud_client.authentication.RequestException;
 import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 
@@ -9,6 +12,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
+import java.net.http.HttpRequest;
 
 /**
  * This class is responsible for saving the clipboard element to the cloud.
@@ -31,7 +35,26 @@ public abstract class SaveClipBoardElement {
         }
     }
 
-    protected abstract void saveClipBoardElementToCloud(ClipBoardElement<?> element) throws AuthenticationException, RequestException;
+    protected void saveClipBoardElementToCloud(ClipBoardElement<?> element) throws AuthenticationException, RequestException{
+        System.out.println(">>> Saving Text element to cloud ...");
+        // check access token :
+        if (AwsAuthenticator.getAccessToken() == null)
+            throw new AuthenticationException("Access token is null");
+
+        // get the jsonObject of the element
+        String json = element.getJson();
+
+        // create request
+        HttpRequest saveRequest = HttpRequest.newBuilder(SAVE_ELEMENT_URI)
+                .header("Authorization", AbstractAuthenticator.getAccessToken())
+                .header("Content-type","application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        // send request
+        ApiClient.getInstance().sendRequest(saveRequest);
+        System.out.println(">>> Successfully saved in cloud!");
+    }
     protected abstract void saveClipBoardElementToLocal(ClipBoardElement<?> element);
     protected abstract void synchronizeLocalElementsWithCloud();
     private boolean isNetworkConnected() {

@@ -1,5 +1,6 @@
 package com.schrodingdong.clipcloud_client;
 
+import com.schrodingdong.clipcloud_client.api_client.ApiClient;
 import com.schrodingdong.clipcloud_client.observer.ClipboardObserver;
 
 import java.io.*;
@@ -15,6 +16,7 @@ public class App {
     public static final String OFFLINE_IMAGE_META_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_image_meta_elements";
     public static final String OFFLINE_FILE_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_file_elements";
     public static final String OFFLINE_FILE_META_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_file_meta_elements";
+
 
 
     public static void initFiles(){

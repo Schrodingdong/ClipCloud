@@ -3,6 +3,7 @@ package com.schrodingdong.clipcloud_client.savers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schrodingdong.clipcloud_client.App;
+import com.schrodingdong.clipcloud_client.api_client.ApiClient;
 import com.schrodingdong.clipcloud_client.authentication.AbstractAuthenticator;
 import com.schrodingdong.clipcloud_client.authentication.AuthenticationException;
 import com.schrodingdong.clipcloud_client.authentication.AwsAuthenticator;
@@ -18,47 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SaveClipBoardTextElement extends SaveClipBoardElement {
-    @Override
-    public void saveClipBoardElementToCloud(ClipBoardElement<?> element) throws AuthenticationException, RequestException{
-        System.out.println(">>> Saving Text element to cloud ...");
-        // check access token :
-        if (AwsAuthenticator.getAccessToken() == null)
-            throw new AuthenticationException("Access token is null");
-
-        // get the jsonObject of the element
-        ObjectMapper mapper = new ObjectMapper();
-        String json = element.getJson();
-
-        // init client
-        System.out.println(">>> init client");
-        HttpClient httpClient = HttpClient.newHttpClient();
-
-        // create request
-        System.out.println(">>> creating request");
-        HttpRequest saveRequest = HttpRequest.newBuilder(SAVE_ELEMENT_URI)
-                .header("Authorization", AbstractAuthenticator.getAccessToken())
-                .header("Content-type","application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-
-        // send request
-        System.out.println(">>> sending request");
-        try {
-            HttpResponse<String> response = httpClient.send(saveRequest, HttpResponse.BodyHandlers.ofString());
-            switch (response.statusCode()){
-                case 401:
-                    throw new AuthenticationException("Expired Access Token, needs relogin");
-                case 400:
-                    throw new RequestException("Invalid input : " + json.toString());
-            }
-            System.out.println(">>> response body : \n\t" + response.body());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(">>> Successfully saved in cloud!");
-    }
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {
