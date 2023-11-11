@@ -1,24 +1,14 @@
 package com.schrodingdong.clipcloud_client.savers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schrodingdong.clipcloud_client.App;
-import com.schrodingdong.clipcloud_client.api_client.ApiClient;
-import com.schrodingdong.clipcloud_client.authentication.AbstractAuthenticator;
-import com.schrodingdong.clipcloud_client.authentication.AuthenticationException;
-import com.schrodingdong.clipcloud_client.authentication.AwsAuthenticator;
-import com.schrodingdong.clipcloud_client.authentication.RequestException;
 import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 import com.schrodingdong.clipcloud_client.clip_elements.TextClipBoardElement;
 
 import java.io.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SaveClipBoardTextElement extends SaveClipBoardElement {
+public class SaverClipBoardTextElement extends SaverClipBoardElement {
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {

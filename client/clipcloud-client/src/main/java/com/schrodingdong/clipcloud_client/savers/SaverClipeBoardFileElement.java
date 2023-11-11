@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SaveClipeBoardFileElement extends SaveClipBoardElement{
+public class SaverClipeBoardFileElement extends SaverClipBoardElement {
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {

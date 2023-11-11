@@ -16,7 +16,7 @@ public class ApiClient {
         client = HttpClient.newHttpClient();
     }
 
-    public static ApiClient getInstance() {
+    synchronized public static ApiClient getInstance() {
         if (instance == null) {
             instance = new ApiClient();
         }
