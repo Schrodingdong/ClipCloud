@@ -15,14 +15,17 @@ import java.util.Date;
 public class ImageClipBoardElement extends ClipBoardElement<BufferedImage> {
     private transient String imgName;
     private transient String tmpPath;
-    private final String EXTENSION = "png";
+    private transient final String EXTENSION = "png";
 
     public ImageClipBoardElement(BufferedImage content) {
+        super();
         // local specific variables -----------------------------------
         this.imgName = Date.from(Instant.now()).getTime() + "." + EXTENSION;
         this.tmpPath = App.OFFLINE_IMAGE_ELEMENTS_FILE+ "/" + imgName;
+        this.content = content;
         // ------------------------------------------------------------
         this.type = ClipBoardElementTypes.IMAGE;
+        this.filename= uuid + "." + EXTENSION;
         setContent(content);
     }
 

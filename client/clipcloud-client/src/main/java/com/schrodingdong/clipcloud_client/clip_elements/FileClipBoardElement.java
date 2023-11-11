@@ -5,18 +5,25 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.Base64;
 
 public class FileClipBoardElement extends ClipBoardElement<File>{
     private transient String srcPath;
     private transient String tmpPath;
+    private transient String extension;
 
     public FileClipBoardElement(File content, String srcPath) {
+        super();
         // local specific variables ------------------------------------------------
         this.srcPath = srcPath;
         this.tmpPath = App.OFFLINE_FILE_ELEMENTS_FILE + "/" + content.getName();
+        this.content = content;
+        this.extension = getExtension();
         // -------------------------------------------------------------------------
         this.type = ClipBoardElementTypes.FILE;
+        this.filename= uuid + "." + extension;
         setContent(content);
     }
 
@@ -45,11 +52,10 @@ public class FileClipBoardElement extends ClipBoardElement<File>{
         return content;
     }
 
-    public String getSrcPath() {
-        return srcPath;
-    }
-
-    public String getTmpPath() {
-        return tmpPath;
+    private String getExtension(){
+        String path = content.getAbsolutePath();
+        return path.substring(
+                path.lastIndexOf('.')+1
+        );
     }
 }

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public abstract class ClipBoardElement<ElType> implements Serializable {
     protected transient ElType content;
+    protected String filename;
     protected ClipBoardElementTypes type;
     protected String contentBase64;
     protected Date created;
@@ -32,24 +33,8 @@ public abstract class ClipBoardElement<ElType> implements Serializable {
         return created;
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public String getOsVersion() {
-        return osVersion;
-    }
-
-    public String getOsName() {
-        return osName;
-    }
-
-    public String getOsArch() {
-        return osArch;
-    }
-
-    public String getUserName() {
-        return userName;
+    public String getFilename() {
+        return filename;
     }
 
     @Override
@@ -57,6 +42,7 @@ public abstract class ClipBoardElement<ElType> implements Serializable {
         return "ClipBoardElement{" +
                 "contentBase64='" + contentBase64 + '\'' +
                 ", type=" + type +
+                ", filename=" + filename +
                 ", created=" + created +
                 ", uuid=" + uuid +
                 ", osVersion='" + osVersion + '\'' +

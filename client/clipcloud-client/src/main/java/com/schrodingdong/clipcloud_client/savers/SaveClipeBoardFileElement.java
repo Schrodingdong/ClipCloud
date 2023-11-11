@@ -54,7 +54,7 @@ public class SaveClipeBoardFileElement extends SaveClipBoardElement{
 
     private void saveFileToTmpFolder(FileClipBoardElement element) {
         try {
-            File newTmpSave = new File(App.OFFLINE_FILE_ELEMENTS_FILE + "/" + element.getCreated().getTime() + "-"+ element.getContent().getName());
+            File newTmpSave = new File(App.OFFLINE_FILE_ELEMENTS_FILE + "/" + element.getFilename());
             FileInputStream fis = new FileInputStream(element.getContent()); // read the file contents
             FileOutputStream fos = new FileOutputStream(newTmpSave);
             fos.write(fis.readAllBytes()); // write it in the tmp thingy

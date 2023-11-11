@@ -54,7 +54,7 @@ public class SaveClipBoardImageElement extends SaveClipBoardElement {
 
     private void saveImageToTmpFolder(ImageClipBoardElement element) {
         try {
-            ImageIO.write(element.getContent(), "png", new File(element.getTmpPath()));
+            ImageIO.write(element.getContent(), "png", new File(App.OFFLINE_IMAGE_ELEMENTS_FILE+ "/" + element.getFilename()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

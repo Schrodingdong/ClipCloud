@@ -7,7 +7,12 @@ import java.util.Base64;
 public class TextClipBoardElement extends ClipBoardElement<String> {
 
     public TextClipBoardElement(String content) {
+        super();
+        // local specific variables -------------------------------
+        this.content = content;
+        // --------------------------------------------------------
         this.type = ClipBoardElementTypes.TEXT;
+        this.filename= null;
         setContent(content);
     }
 
