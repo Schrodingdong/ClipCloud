@@ -16,7 +16,7 @@ public class App {
     public static final String OFFLINE_FILE_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_file_elements";
     public static final String OFFLINE_FILE_META_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_file_meta_elements";
 
-    public static void main(String[] args) {
+    public static void initFiles(){
         // initialize the needed folders
         try{
             new File(CLIPCLOUD_PATH).mkdir();
@@ -30,7 +30,10 @@ public class App {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public static void main(String[] args) {
+        initFiles();
         // initialize the observer
         ClipboardObserver observer = new ClipboardObserver();
         System.out.println("Clipboard observer started. Press Ctrl+C to exit.");
