@@ -2,6 +2,7 @@ package com.schrodingdong.clipcloud_client.clip_elements;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class ClipBoardElement<ElType> implements Serializable {
@@ -35,6 +36,20 @@ public abstract class ClipBoardElement<ElType> implements Serializable {
 
     public String getFilename() {
         return filename;
+    }
+
+    public String getJson() {
+        return "{" +
+                "\"contentBase64\":\"" + contentBase64 + '\"' +
+                ", \"type\":\"" + type + '\"' +
+                ", \"filename\":\"" + filename + '\"' +
+                ", \"created\":\"" + created + '\"' +
+                ", \"uuid\":\"" + uuid + '\"' +
+                ", \"osVersion\":\"" + osVersion + '\"' +
+                ", \"osName\":\"" + osName + '\"' +
+                ", \"osArch\":\"" + osArch + '\"' +
+                ", \"userName\":\"" + userName + '\"' +
+                '}';
     }
 
     @Override

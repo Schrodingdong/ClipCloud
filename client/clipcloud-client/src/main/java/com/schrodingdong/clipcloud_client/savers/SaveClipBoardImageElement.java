@@ -13,18 +13,20 @@ import java.util.List;
 public class SaveClipBoardImageElement extends SaveClipBoardElement {
     @Override
     public void saveClipBoardElementToCloud(ClipBoardElement element) {
-        // TODO
+
     }
 
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {
+        System.out.println(">>> Saving Image element locally...");
         // save the image in tmp folder
         ImageClipBoardElement imgElement = (ImageClipBoardElement) element;
         saveImageToTmpFolder(imgElement);
 
         // save the metadata in the offline file
         saveOfflineMetadataToFile(imgElement);
+        System.out.println(">>> Successfully saved locally !");
     }
 
     private void saveOfflineMetadataToFile(ImageClipBoardElement imgElement) {

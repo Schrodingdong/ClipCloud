@@ -18,12 +18,14 @@ public class SaveClipeBoardFileElement extends SaveClipBoardElement{
 
     @Override
     protected void saveClipBoardElementToLocal(ClipBoardElement<?> element) {
+        System.out.println(">>> Saving File element locally...");
         // save the file in tmp folder
         FileClipBoardElement fileElement = (FileClipBoardElement) element;
         saveFileToTmpFolder(fileElement);
 
         // save the metadata in the offline file
         saveOfflineMetadataToFile(fileElement);
+        System.out.println(">>> Successfully saved locally !");
     }
 
 

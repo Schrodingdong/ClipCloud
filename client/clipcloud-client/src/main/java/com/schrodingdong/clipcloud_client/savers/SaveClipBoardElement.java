@@ -1,6 +1,8 @@
 package com.schrodingdong.clipcloud_client.savers;
 
 
+import com.schrodingdong.clipcloud_client.authentication.AuthenticationException;
+import com.schrodingdong.clipcloud_client.authentication.RequestException;
 import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 
 import java.io.*;
@@ -22,10 +24,14 @@ public abstract class SaveClipBoardElement {
         // TODO : dev of local saving
         saveClipBoardElementToLocal(element);
         synchronizeLocalElementsWithCloud();
-        saveClipBoardElementToCloud(element);
+        try{
+            saveClipBoardElementToCloud(element);
+        } catch (AuthenticationException | RequestException e){
+            System.err.println(e.getMessage());
+        }
     }
 
-    protected abstract void saveClipBoardElementToCloud(ClipBoardElement<?> element);
+    protected abstract void saveClipBoardElementToCloud(ClipBoardElement<?> element) throws AuthenticationException, RequestException;
     protected abstract void saveClipBoardElementToLocal(ClipBoardElement<?> element);
     protected abstract void synchronizeLocalElementsWithCloud();
     private boolean isNetworkConnected() {

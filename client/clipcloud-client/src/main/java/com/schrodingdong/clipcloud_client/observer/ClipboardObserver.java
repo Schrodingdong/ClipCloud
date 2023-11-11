@@ -57,7 +57,6 @@ public class ClipboardObserver implements ClipboardOwner {
                 saveClipBoardElement.saveClipBoardElement(clipBoardElement);
             } // try a batch saving ??
         } catch (Exception e) {
-            e.printStackTrace();
             System.err.println(">> clipboard element is : not a file");
         }
     }
@@ -85,6 +84,7 @@ public class ClipboardObserver implements ClipboardOwner {
             saveClipBoardElement = new SaveClipBoardTextElement();
             saveClipBoardElement.saveClipBoardElement(clipBoardElement);
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println(">> clipboard element is : not a string");
         }
     }
