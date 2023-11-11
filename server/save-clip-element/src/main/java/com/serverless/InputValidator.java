@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InputValidator {
-    public static final List<String> INPUT_ESSENTIAL_FIELDS = Arrays.asList("created", "uuid", "type", "osVersion", "osName", "osArch", "userName","content");
-    public static final List<String> INPUT_IMAGE_FIELDS = Arrays.asList("contentBase64","imgName", "tmpPath");
-    public static final List<String> INPUT_FILE_FIELDS = Arrays.asList("contentBase64","srcPath", "tmpPath");
+    public static final List<String> INPUT_ESSENTIAL_FIELDS = Arrays.asList("contentBase64","created", "uuid", "type", "osVersion", "osName", "osArch", "userName");
 
     public boolean validateEssentialInputFields(Map<String, Object> input){
         for (String field : INPUT_ESSENTIAL_FIELDS) {
@@ -17,33 +15,4 @@ public class InputValidator {
         }
         return true;
     }
-
-    public boolean validateTextInputFields(Map<String, Object> input){
-        return validateEssentialInputFields(input);
-    }
-
-    public boolean validateImageInputFields(Map<String, Object> input){
-        if(!validateEssentialInputFields(input)) return false;
-        for(String field: INPUT_IMAGE_FIELDS){
-            if(!input.containsKey(field)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean validateFileInputFields(Map<String, Object> input){
-        if(!validateEssentialInputFields(input)) return false;
-        for(String field: INPUT_FILE_FIELDS){
-            if(!input.containsKey(field)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-
-
-
 }

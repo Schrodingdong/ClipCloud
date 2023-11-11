@@ -40,7 +40,8 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
         // init methods
         initHeaders();
         initSdkClients();
-		// extract request body (don't forget to parse the string to a map
+
+		// extract request body (don't forget to parse the string to a map)
 		Map<String, Object> input = null;
 		try{
 			String sInput = (String) apiInput.get("body");
@@ -74,36 +75,12 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		Response responseBody;
 		switch (input.get("type").toString().toUpperCase()){
 			case "TEXT":
-				if (!inputValidator.validateTextInputFields(input)) {
-					responseBody = new Response("Invalid input", input);
-					return ApiGatewayResponse.builder()
-							.setStatusCode(400)
-							.setObjectBody(responseBody)
-							.setHeaders(headers)
-							.build();
-				}
 				responseBody = textClipBoardElementHandler(input);
 				break;
 			case "FILE":
-				if (!inputValidator.validateFileInputFields(input)) {
-					responseBody = new Response("Invalid input", input);
-					return ApiGatewayResponse.builder()
-							.setStatusCode(400)
-							.setObjectBody(responseBody)
-							.setHeaders(headers)
-							.build();
-				}
 				responseBody = fileClipBoardElementHandler(input);
 				break;
 			case "IMAGE":
-				if (!inputValidator.validateImageInputFields(input)) {
-					responseBody = new Response("Invalid input", input);
-					return ApiGatewayResponse.builder()
-							.setStatusCode(400)
-							.setObjectBody(responseBody)
-							.setHeaders(headers)
-							.build();
-				}
 				responseBody = imageClipBoardElementHandler(input);
 				break;
 			default:
@@ -171,8 +148,8 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 				.build();
 
 		// get extension
-		String extension = input.get("tmpPath").toString().substring(
-				input.get("tmpPath").toString().lastIndexOf('.')+1
+		String extension = input.get("filename").toString().substring(
+				input.get("filename").toString().lastIndexOf('.')+1
 		);
 		LOG.info(">>> object extensiosn :" + extension);
 
@@ -194,7 +171,7 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		userMetadata.put("created",input.get("created").toString());
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 				.bucket(BUCKET_NAME)
-				.key(input.get("uuid").toString() + "." + extension)
+				.key(input.get("filename").toString())
 				.contentLength((long) contentBase64.length)
 				.contentType("image/"+extension)
 				.metadata(userMetadata)
@@ -223,8 +200,8 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 				.build();
 
 		// get extension
-		String extension = input.get("tmpPath").toString().substring(
-				input.get("tmpPath").toString().lastIndexOf('.')+1
+		String extension = input.get("filename").toString().substring(
+				input.get("filename").toString().lastIndexOf('.')+1
 		);
 		LOG.info(">>> object extensiosn :" + extension);
 
@@ -247,7 +224,7 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 		userMetadata.put("created",input.get("created").toString());
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 				.bucket(BUCKET_NAME)
-				.key(input.get("uuid").toString() + "." + extension)
+				.key(input.get("filename").toString())
 				.contentLength((long) contentBase64.length)
 				.contentType("image/"+extension)
 				.metadata(userMetadata)
