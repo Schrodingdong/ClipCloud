@@ -6,12 +6,15 @@ import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URI;
 
 /**
  * This class is responsible for saving the clipboard element to the cloud.
  * In case where there is a connection failure, we will have to save the clipboard element to the local storage.
  */
 public abstract class SaveClipBoardElement {
+    public static final String SAVE_ELEMENT_URL = "https://9yfjdn60m7.execute-api.eu-west-2.amazonaws.com/dev/save-clip-element";
+    public static final URI SAVE_ELEMENT_URI = URI.create(SAVE_ELEMENT_URL);
     protected ObjectOutputStream objectOutputStream_offlineElements;
     protected ObjectInputStream objectInputStream_offlineElements;
 
@@ -19,6 +22,7 @@ public abstract class SaveClipBoardElement {
         // TODO : dev of local saving
         saveClipBoardElementToLocal(element);
         synchronizeLocalElementsWithCloud();
+        saveClipBoardElementToCloud(element);
     }
 
     protected abstract void saveClipBoardElementToCloud(ClipBoardElement<?> element);

@@ -55,9 +55,8 @@ public abstract class ClipBoardElement<ElType> implements Serializable {
     @Override
     public String toString() {
         return "ClipBoardElement{" +
-                "content=" + content +
+                "contentBase64='" + contentBase64 + '\'' +
                 ", type=" + type +
-                ", contentBase64='" + contentBase64 + '\'' +
                 ", created=" + created +
                 ", uuid=" + uuid +
                 ", osVersion='" + osVersion + '\'' +

@@ -1,17 +1,53 @@
 package com.schrodingdong.clipcloud_client.savers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schrodingdong.clipcloud_client.App;
+import com.schrodingdong.clipcloud_client.authentication.AbstractAuthenticator;
 import com.schrodingdong.clipcloud_client.clip_elements.ClipBoardElement;
 import com.schrodingdong.clipcloud_client.clip_elements.TextClipBoardElement;
 
 import java.io.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SaveClipBoardTextElement extends SaveClipBoardElement {
     @Override
     public void saveClipBoardElementToCloud(ClipBoardElement<?> element) {
-        // TODO
+        // get the jsonObject of the element
+        ObjectMapper mapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(element);
+        } catch (JsonProcessingException e) {
+            System.out.println("SaveClipBoardTextElement.saveClipBoardElementToCloud >> error mapping to json");
+            throw new RuntimeException(e);
+        }
+        // init client
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        // create request
+        HttpRequest saveRequest = HttpRequest.newBuilder(SAVE_ELEMENT_URI)
+                .header("Authorization", AbstractAuthenticator.getAccessToken())
+                .header("Content-type","application/json")
+                .header("Content-length", Integer.toString(json.length()))
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        // send request
+        try {
+            HttpResponse<String> response = httpClient.send(saveRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println(">>> response body : \n\t" + response.body());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     @Override

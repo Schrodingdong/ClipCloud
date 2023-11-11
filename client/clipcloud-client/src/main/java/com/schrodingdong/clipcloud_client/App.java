@@ -16,6 +16,7 @@ public class App {
     public static final String OFFLINE_FILE_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_file_elements";
     public static final String OFFLINE_FILE_META_ELEMENTS_FILE = ELEMENTS_PATH+ "/offline_file_meta_elements";
 
+
     public static void initFiles(){
         // initialize the needed folders
         try{
