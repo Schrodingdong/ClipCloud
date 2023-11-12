@@ -1,0 +1,23 @@
+.main-container{
+    background: rgb(0,17,41);
+    background: linear-gradient(200deg, rgba(0,17,41,1) 0%, rgba(0,33,82,1) 100%);
+    width: 100vw;
+    height: 100vh;
+}
+.top-bar{
+    padding: 1rem 0;
+    display: flex;
+}
+
+.logo{
+    width: 10rem;
+    position: relative;
+    margin: auto;
+}
+.content{
+    padding: 0 3rem;
+    color: white;
+}
+.content h1{
+    text-align: left;
+}
