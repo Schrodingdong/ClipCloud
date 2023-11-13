@@ -53,6 +53,20 @@ functions:
           method: POST
           cors: true
 
+  retrieve-clip-element:
+    handler: com.serverless.retrieve_lambda.Handler
+    events:
+      - http:
+          path: retrieve-clip-element
+          method: GET
+          cors: true
+          authorizer:
+            scopes:
+              - aws.cognito.signin.user.admin
+            name: awsCognito
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt clipCloudCognitoUserPool.Arn
+
   save-clip-element:
     handler: com.serverless.save_lambda.Handler
     events:

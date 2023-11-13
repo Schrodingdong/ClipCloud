@@ -23,9 +23,6 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
 
     private final static String USER_POOL_ID = System.getenv("userPoolId");
     private final static String APP_CLIENT_ID = System.getenv("appClientId");
-    private String accessToken;
-    private String refreshToken;
-    private String idToken;
 
 
     @Override
@@ -68,9 +65,9 @@ public class Handler implements RequestHandler<Map<String, Object>, ApiGatewayRe
         try {
             InitiateAuthResponse authResult = cognitoClient.initiateAuth(initiateAuthRequest);
             LOG.info(">>> authResult: \n{}", authResult);
-            accessToken = authResult.authenticationResult().accessToken();
-            idToken = authResult.authenticationResult().idToken();
-            refreshToken = authResult.authenticationResult().refreshToken();
+            String accessToken = authResult.authenticationResult().accessToken();
+            String idToken = authResult.authenticationResult().idToken();
+            String refreshToken = authResult.authenticationResult().refreshToken();
             Map<String,Object> accessTokenMap= new HashMap<>();
             accessTokenMap.put("accessToken", accessToken);
             accessTokenMap.put("idToken", idToken);

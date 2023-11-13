@@ -1,4 +1,4 @@
-package com.serverless;
+package com.serverless.save_lambda;
 
 import java.util.Arrays;
 import java.util.List;
